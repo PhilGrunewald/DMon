@@ -4,6 +4,7 @@
 // July 14 - shorten file names, only store two columns, experiment with high sample rates
 // 16 July 14 - major change: instead of summing 100 readings and do an RMS with the 441 readings per second, the RMS is taken of the 100 samples (over 1/441s) and the 441 readings per second are AVERAGED.
 // May 15 - added ID edit field
+// 19 Jul 15 - removed the redundant 'draw text'
 //
 package com.Phil.DEMon;
 
@@ -175,17 +176,6 @@ public class DrawView extends View {
 	Log.d("micro","hh"+i+files[i].getName());
     }
 
-      //  drawView = new DrawView(this);
-	//drawView = (ImageView) findViewById(R.id.PhilView);
-      //  drawView.setBackgroundColor(Color.BLUE);
-      //  setContentView(drawView);
-// start draw test 14_08_02_
-//    DrawView mDrawingView=new DrawView(this);
-//    setContentView(R.layout.activity_main);    
-//    LinearLayout mDrawingPad=(LinearLayout)findViewById(R.id.view_drawing_pad);
-//
-//    mDrawingPad.addView(mDrawingView);
-// end draw test 14_08_02_
 }
 
 @Override
