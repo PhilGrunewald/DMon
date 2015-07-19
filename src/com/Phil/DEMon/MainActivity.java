@@ -4,6 +4,7 @@
 // July 14 - shorten file names, only store two columns, experiment with high sample rates
 // 16 July 14 - major change: instead of summing 100 readings and do an RMS with the 441 readings per second, the RMS is taken of the 100 samples (over 1/441s) and the 441 readings per second are AVERAGED.
 // May 15 - added ID edit field
+// Added this file to GitHub repository
 // 19 Jul 15 - removed the redundant 'draw text'
 //
 package com.Phil.DEMon;
