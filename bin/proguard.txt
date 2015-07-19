@@ -1,0 +1,6 @@
+# view AndroidManifest.xml #generated:16
+-keep class com.Phil.DEMon.AlarmReceiver { <init>(...); }
+
+# view AndroidManifest.xml #generated:18
+-keep class com.Phil.DEMon.MainActivity { <init>(...); }
+
