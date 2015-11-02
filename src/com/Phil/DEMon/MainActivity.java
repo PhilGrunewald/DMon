@@ -6,7 +6,8 @@
 // May 15 - added ID edit field
 // Added this file to GitHub repository
 // 19 Jul 15 - removed the redundant 'draw text'
-//
+// NOTE 
+// 9 Oct 15 - restored code from 26 August 15 using Time Machine Backup!!!
 package com.Phil.DEMon;
 
 import android.app.Activity;
@@ -69,7 +70,7 @@ import android.os.Bundle;
 //Main Class
 public class MainActivity extends Activity implements android.view.View.OnClickListener{
 
-	private String versionDate="15_05_22";
+	private String versionDate="15_10_09";
 	private FileWriter writer;
 	private FileWriter metawriter;
 	File file;
