@@ -37,6 +37,8 @@ import android.widget.ImageView;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
+import java.io.FileReader;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -70,7 +72,7 @@ import android.os.Bundle;
 //Main Class
 public class MainActivity extends Activity implements android.view.View.OnClickListener{
 
-	private String versionDate="15_10_09";
+	private String versionDate="15_11_02";
 	private FileWriter writer;
 	private FileWriter metawriter;
 	File file;
@@ -116,7 +118,7 @@ public class MainActivity extends Activity implements android.view.View.OnClickL
 
 	private List<String> fileList = new ArrayList<String>();
 
-	private String ContactID;
+	private String metaID;
 
 // graph
 
@@ -149,15 +151,16 @@ public class DrawView extends View {
 
 	//  15_05_19_
 	//
-	ContactID = getString(R.string.contactID);
+	// metaID = getString(R.string.metaID);
+
     // myEditLocation = (EditText) findViewById(R.id.edit_ID);
-    myEditID = (EditText) findViewById(R.id.edit_ID);
+    // myEditID = (EditText) findViewById(R.id.edit_ID);
 
-    myButton2 = (Button) findViewById(R.id.button2);
-    myButton2.setOnClickListener((OnClickListener) this);
+    // myButton2 = (Button) findViewById(R.id.button2);   // stop readings
+    // myButton2.setOnClickListener((OnClickListener) this);
 
-    my_btn_setID = (Button) findViewById(R.id.btn_setID);
-    my_btn_setID.setOnClickListener((OnClickListener) this);
+    // my_btn_setID = (Button) findViewById(R.id.btn_setID);
+    // my_btn_setID.setOnClickListener((OnClickListener) this);
     //my_btn_setLocation = (Button) findViewById(R.id.btn_setLocation);
     //my_btn_setLocation.setOnClickListener((OnClickListener) this);
 
@@ -173,6 +176,21 @@ public class DrawView extends View {
     //list files in this directory
     File[] files = folder.listFiles();
     fileList.clear();
+
+// 2 Nov 15 begin added
+    //Get the text file
+    File idFile = new File(root,"/METER/id.txt");
+    
+    try {
+        BufferedReader br = new BufferedReader(new FileReader(idFile));
+        metaID = br.readLine();
+        br.close();
+    }
+    catch (IOException e) {
+        metaID = 0;
+    }
+
+// 2 Nov 15 end added
     
     for(int i=0;i<files.length;i++) {
 	Log.d("micro","hh"+i+files[i].getName());
@@ -182,14 +200,14 @@ public class DrawView extends View {
 
 @Override
 public void onClick(View v) {
-	if (v==myButton2 && running==1){
-		printToAndroid("Taking last sample...");
-		Log.d("micro", "stop running");
-		running=0;
-	}
-	if (v==my_btn_setID) {
-		ContactID = myEditID.getText().toString();
-	}
+//	if (v==myButton2 && running==1){
+//		printToAndroid("Taking last sample...");
+//		Log.d("micro", "stop running");
+//		running=0;
+//	}
+//	if (v==my_btn_setID) {
+//		metaID = myEditID.getText().toString();
+//	}
 //// remove field and button
 //		ViewGroup edit_layout = (ViewGroup) myEditLocation.getParent();
 //		edit_layout.removeView(myEditLocation);
@@ -229,9 +247,9 @@ public void onStart(){
 private void printToAndroid(final String str1){	
 	runOnUiThread(new Runnable() {
 	     public void run() {
-		   //  String ContactID = getString(R.string.contactID);
+		   //  String metaID = getString(R.string.metaID);
 	       mylogtext=str1+"\n"+mylogtext; 
-	       mylog.setText("Consumption for Contact ID " + ContactID + " at " + myLocationText + ": \n"+mylogtext);
+	       mylog.setText("Version: " + versionDate + ": \n ID: " + metaID + ": \n"+mylogtext);
 	       if (mylogtext.length() > 5000) {
 		 mylogtext=""; 
 	       }
@@ -293,12 +311,14 @@ private void main() {
 	final String formatedDate = formatter_date.format(thisMoment);
 
 // WRITE META FILE
-	//  String ContactID = getString(R.string.contactID);
+	//  String metaID = getString(R.string.metaID);
 	String dataType = getString(R.string.dataType);
 	try {
 		metawriter.write("Software version: "+ versionDate +"\n");
 		metawriter.write("Device ID: "+ imei +"\n");
-		metawriter.write("Contact ID: "+ ContactID +"\n");
+                // remove this line in due course as it is now the Meta ID that is stored
+		metawriter.write("Contact ID: "+ metaID +"\n");
+		metawriter.write("Meta ID: "+ metaID +"\n");
 		metawriter.write("Data type: "+ dataType +"\n");
 		metawriter.write("Date: "+formatedDate+"\n");
 		metawriter.write("Offset: "+myDoubleFormat.format(offset)+"\n");
