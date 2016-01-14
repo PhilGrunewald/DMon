@@ -72,7 +72,7 @@ import android.os.Bundle;
 //Main Class
 public class MainActivity extends Activity implements android.view.View.OnClickListener{
 
-	private String versionDate="15_11_02";
+	private String versionDate="16_01_14";
 	private FileWriter writer;
 	private FileWriter metawriter;
 	File file;
@@ -187,7 +187,7 @@ public class DrawView extends View {
         br.close();
     }
     catch (IOException e) {
-        metaID = 0;
+        metaID = "0";
     }
 
 // 2 Nov 15 end added
@@ -249,7 +249,7 @@ private void printToAndroid(final String str1){
 	     public void run() {
 		   //  String metaID = getString(R.string.metaID);
 	       mylogtext=str1+"\n"+mylogtext; 
-	       mylog.setText("Version: " + versionDate + ": \n ID: " + metaID + ": \n"+mylogtext);
+	       mylog.setText("Version: " + versionDate + ": \nID: " + metaID + ": \n"+mylogtext);
 	       if (mylogtext.length() > 5000) {
 		 mylogtext=""; 
 	       }
