@@ -72,7 +72,7 @@ import android.os.Bundle;
 //Main Class
 public class MainActivity extends Activity implements android.view.View.OnClickListener{
 
-	private String versionDate="16_01_14";
+	private String versionDate="16_02_11 cal=1";
 	private FileWriter writer;
 	private FileWriter metawriter;
 	File file;
@@ -100,7 +100,7 @@ public class MainActivity extends Activity implements android.view.View.OnClickL
 	private int Nread=0;
 	
 	private double offset = -11.3;// clamp type 2 see /Users/pg1008/Documents/Data/14_11_METER/14_11_12_calibration/14_11_12_calibration.xls;
-	private double scaleFactor = 0.41;//;
+	private double scaleFactor = 1;//0.154;//0.41;//;
 	private SimpleDateFormat formatter_sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  
 	private SimpleDateFormat formatter_timestamp = new SimpleDateFormat("HH:mm:ss");  
 	private SimpleDateFormat formatter_date = new SimpleDateFormat("yy-MM-dd");  
