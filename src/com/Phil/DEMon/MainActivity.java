@@ -72,7 +72,7 @@ import android.os.Bundle;
 //Main Class
 public class MainActivity extends Activity implements android.view.View.OnClickListener{
 
-	private String versionDate="16_02_11 cal=1";
+	private String versionDate="16_03_07";
 	private FileWriter writer;
 	private FileWriter metawriter;
 	File file;
@@ -99,9 +99,9 @@ public class MainActivity extends Activity implements android.view.View.OnClickL
 	private int minbuffsize=0;
 	private int Nread=0;
 	
-	private double offset = -11.3;// clamp type 2 see /Users/pg1008/Documents/Data/14_11_METER/14_11_12_calibration/14_11_12_calibration.xls;
+	private double offset = 0;// clamp type 2 see /Users/pg1008/Documents/Data/14_11_METER/14_11_12_calibration/14_11_12_calibration.xls;
 	private double scaleFactor = 1;//0.154;//0.41;//;
-	private SimpleDateFormat formatter_sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  
+	private SimpleDateFormat formatter_datetime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  
 	private SimpleDateFormat formatter_timestamp = new SimpleDateFormat("HH:mm:ss");  
 	private SimpleDateFormat formatter_date = new SimpleDateFormat("yy-MM-dd");  
 	
@@ -110,8 +110,6 @@ public class MainActivity extends Activity implements android.view.View.OnClickL
 	       	 
 	private TextView mylog;
 	private Button myButton2;
-	//private Button my_btn_setLocation;
-	//private EditText myEditLocation;
 
 	private Button my_btn_setID;
 	private EditText myEditID;
@@ -375,13 +373,13 @@ private void main() {
 		final_sumrms=(final_sumrms+offset)*scaleFactor; // correction factor
 
 		Date date1 = new Date();  
-		final String formattedDateString_sd = formatter_sd.format(date1);
+		final String formattedDateTime = formatter_datetime.format(date1);
 		final String formattedDateString_timestamp = formatter_timestamp.format(date1);
 
 		printToAndroid(formattedDateString_timestamp+": "+mydecimalformat.format(final_sumrms)+" W"); 
 		
 		try {
-		     writer.write(formattedDateString_timestamp+","+mydecimalformat.format(final_sumrms)+"\n");
+		     writer.write(formattedDateTime+","+mydecimalformat.format(final_sumrms)+"\n");
 		    } catch (IOException e) {
 		     // TODO Auto-generated catch block
 		     e.printStackTrace();
