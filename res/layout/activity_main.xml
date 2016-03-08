@@ -4,17 +4,16 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
+	<!--	
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
-	<!--	
         <Button
             android:id="@+id/button1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Get going" />
--->
     <Button
         android:id="@+id/button2"
         android:layout_width="wrap_content"
@@ -41,6 +40,7 @@
         android:layout_weight=".20"
         android:text="Set" />
     </LinearLayout>
+-->
 	<!--	
 -->
 
@@ -51,8 +51,8 @@
     <ImageView
         android:id="@+id/PhilView"
         android:layout_width="match_parent"
-        android:layout_height="160px"
-        android:src="@drawable/ic_launcher" />
+        android:layout_height="120px"
+        android:src="@drawable/meter_logo_small" />
         <LinearLayout
             android:id="@+id/view_drawing_pad"
             android:layout_width="fill_parent"
@@ -67,8 +67,8 @@
     <TextView
         android:id="@+id/Debugview"
         android:layout_width="match_parent"
-        android:layout_height="200px"
-        android:maxLines="200"
+        android:layout_height="300px"
+        android:maxLines="300"
         android:scrollbars="vertical"
         android:text="debug line"
         android:textSize="14dip" />

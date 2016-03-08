@@ -10,7 +10,7 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/ic_oxford"
+        android:icon="@drawable/meter_symbol_white"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <receiver android:name=".AlarmReceiver"></receiver>
