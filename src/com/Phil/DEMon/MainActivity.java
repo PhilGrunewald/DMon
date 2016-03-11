@@ -1,25 +1,17 @@
 // Phil Grunewald 
-// log
-// June 14 - commented out buttons, auto-start at startup
-// July 14 - shorten file names, only store two columns, experiment with high sample rates
-// 16 July 14 - major change: instead of summing 100 readings and do an RMS with the 441 readings per second, the RMS is taken of the 100 samples (over 1/441s) and the 441 readings per second are AVERAGED.
-// May 15 - added ID edit field
-// Added this file to GitHub repository
-// 19 Jul 15 - removed the redundant 'draw text'
-// NOTE 
-// 9 Oct 15 - restored code from 26 August 15 using Time Machine Backup!!!
+// A simple tool for recording a AC signal on the microphone jack and writing it to file
+// see earlier commits for more elaborate versions with onClick events
+//
 package com.Phil.DEMon;
 
 import android.app.Activity;
 import android.content.Context;
-import android.telephony.TelephonyManager;
+import android.telephony.TelephonyManager;              // to get IMEI number
 
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.media.MediaRecorder.AudioSource;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
 
 import android.os.Bundle;
 import android.os.Environment;
@@ -27,7 +19,6 @@ import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
@@ -48,222 +39,73 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.InputStreamEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-
-// for graph
-import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.view.View;
-
-import android.app.Activity;
-import android.graphics.Color;
-import android.os.Bundle;
-// end graph
-
 //Main Class
-public class MainActivity extends Activity implements android.view.View.OnClickListener{
-
-	private String versionDate="16_03_07";
+public class MainActivity extends Activity{
+	private String versionDate="16_03_08";
 	private FileWriter writer;
 	private FileWriter metawriter;
-	File file;
-	File metafile;
-	String filename;
-	String imei;
 	private File root;
-	File folder;
-	Date date1;  
-	String formattedDateString;
-	String mylogtext="";
-	String myLocationText="";
-
+	private File file;
+	private File metafile;
+	private String filename;
+	private String imei;
+	private File folder;
+	private Date recordingDate;  
+	private String formattedDateString;
+	private String mylogtext="";
 	private double final_sumrms=0.0;	
-
 	private double bufSumSqr = 0.0;	
 	private	double bufAvg=0.0;
-
 	short[] buffer = new short[100];
-	
 	private int running=0;
-	
 	private AudioRecord recorder;
 	private int minbuffsize=0;
 	private int Nread=0;
-	
-	private double offset = 0;// clamp type 2 see /Users/pg1008/Documents/Data/14_11_METER/14_11_12_calibration/14_11_12_calibration.xls;
-	private double scaleFactor = 1;//0.154;//0.41;//;
+	private double scaleFactor = 1;
+	private double offset = 0;			// /Data/14_11_METER/14_11_12_calibration/14_11_12_calibration.xls;
+
 	private SimpleDateFormat formatter_datetime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  
-	private SimpleDateFormat formatter_timestamp = new SimpleDateFormat("HH:mm:ss");  
 	private SimpleDateFormat formatter_date = new SimpleDateFormat("yy-MM-dd");  
-	
 	private DecimalFormat mydecimalformat = new DecimalFormat("0.0");
 	private DecimalFormat myDoubleFormat = new DecimalFormat("0.00");
-	       	 
 	private TextView mylog;
-	private Button myButton2;
+	private String metaID;			// read from txt file
 
-	private Button my_btn_setID;
-	private EditText myEditID;
 
-	private List<String> fileList = new ArrayList<String>();
-
-	private String metaID;
-
-// graph
-
-    DrawView drawView;
-
-public class DrawView extends View {
-    Paint paint = new Paint();
-
-    public DrawView(Context context) {
-	super(context);
-	paint.setColor(Color.BLACK);
-    }
-
-    @Override
-    public void onDraw(Canvas canvas) {
-	    canvas.drawLine(0, 0, 200, 200, paint);
-	    canvas.drawLine(200, 0, 0, 200, paint);
-    }
-
-}
-
-// end graph
 @Override
-  public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_main);   
-    mylog = (TextView) findViewById(R.id.Debugview);
-    mylog.setMovementMethod(new ScrollingMovementMethod());
-    mylog.setText(mylogtext);
-
-	//  15_05_19_
-	//
-	// metaID = getString(R.string.metaID);
-
-    // myEditLocation = (EditText) findViewById(R.id.edit_ID);
-    // myEditID = (EditText) findViewById(R.id.edit_ID);
-
-    // myButton2 = (Button) findViewById(R.id.button2);   // stop readings
-    // myButton2.setOnClickListener((OnClickListener) this);
-
-    // my_btn_setID = (Button) findViewById(R.id.btn_setID);
-    // my_btn_setID.setOnClickListener((OnClickListener) this);
-    //my_btn_setLocation = (Button) findViewById(R.id.btn_setLocation);
-    //my_btn_setLocation.setOnClickListener((OnClickListener) this);
-
+public void onCreate(Bundle savedInstanceState) {
+	super.onCreate(savedInstanceState);
+	setContentView(R.layout.activity_main);   
+	mylog = (TextView) findViewById(R.id.Debugview);
+	mylog.setMovementMethod(new ScrollingMovementMethod());
+	mylog.setText(mylogtext);
+	
+// get imei number of this phone
 	TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-
 	imei = tm.getDeviceId();
-    root = Environment.getExternalStorageDirectory();
-    folder = new File(root,"/METER"); // reinstated 3 Nov 14
-    boolean success = true;
-    if (!folder.exists()) {
-	success = folder.mkdir();
-    }
-    //list files in this directory
-    File[] files = folder.listFiles();
-    fileList.clear();
 
-// 2 Nov 15 begin added
-    //Get the text file
-    File idFile = new File(root,"/METER/id.txt");
-    
-    try {
-        BufferedReader br = new BufferedReader(new FileReader(idFile));
-        metaID = br.readLine();
-        br.close();
-    }
-    catch (IOException e) {
-        metaID = "0";
-    }
-
-// 2 Nov 15 end added
-    
-    for(int i=0;i<files.length;i++) {
-	Log.d("micro","hh"+i+files[i].getName());
-    }
-
-}
-
-@Override
-public void onClick(View v) {
-//	if (v==myButton2 && running==1){
-//		printToAndroid("Taking last sample...");
-//		Log.d("micro", "stop running");
-//		running=0;
+// prepare METER folder
+	root = Environment.getExternalStorageDirectory();
+	folder = new File(root,"/METER"); // reinstated 3 Nov 14
+	// folder /sdcard/METER is assumed to exist - it gets created by meter.py on phone setup
+//	if (!folder.exists()) {
+//		folder.mkdir();
 //	}
-//	if (v==my_btn_setID) {
-//		metaID = myEditID.getText().toString();
-//	}
-//// remove field and button
-//		ViewGroup edit_layout = (ViewGroup) myEditLocation.getParent();
-//		edit_layout.removeView(myEditLocation);
-//		ViewGroup btn_layout = (ViewGroup) my_btn_setLocation.getParent();
-//		btn_layout.removeView(my_btn_setLocation);
-////EditText myEditText = (EditText) findViewById(R.id.myEditText);  
-//InputMethodManager imm = (InputMethodManager)getSystemService(
-//      Context.INPUT_METHOD_SERVICE);
-//imm.hideSoftInputFromWindow(myEditLocation.getWindowToken(), 0);
-//			try {
-//				metawriter.write("Location: " + myLocationText + "\n");
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
-}
-
-
-@Override
-public void onStart(){
-    super.onStart();  
-	Log.d("micro", "in onstart");
-	Log.d("micro", "start running main()");
-	if (running!=1) {	// 14_07_26_ got the impression new instances are created when waking up the phone	
-	      running=1;
-	      new Thread(new Runnable() { 
-		  public void run(){	    
-		  main();
-		  }
-	      }).start();
+//Get the ID from text file
+	File idFile = new File(root,"/METER/id.txt");
+	try {
+		BufferedReader br = new BufferedReader(new FileReader(idFile));
+		metaID = br.readLine();
+		br.close();
 	}
- }
-
-
-
-private void printToAndroid(final String str1){	
-	runOnUiThread(new Runnable() {
-	     public void run() {
-		   //  String metaID = getString(R.string.metaID);
-	       mylogtext=str1+"\n"+mylogtext; 
-	       mylog.setText("Version: " + versionDate + ": \nID: " + metaID + ": \n"+mylogtext);
-	       if (mylogtext.length() > 5000) {
-		 mylogtext=""; 
-	       }
-	    }
-	});
-}
-
-private void main() {
-	date1 = new Date();	
-	formattedDateString = formatter_date.format(date1);	
-
+	catch (IOException e) {
+		metaID = "0";
+	}
+// create .csv and .meta files
 	int FileIndex=1;
 	filename=formattedDateString+"_"+imei+"_"+FileIndex+".csv";
 	file = new File(folder, filename);
 	metafile = new File(folder, filename);
-
 	while (file.exists()) {
 		FileIndex++;
 		filename=formattedDateString+"_"+imei+"_"+FileIndex+".csv";
@@ -299,23 +141,13 @@ private void main() {
 	{
 		e.printStackTrace();
 	}
-	Log.d("micro","set up");
-	minbuffsize = AudioRecord.getMinBufferSize(44100,AudioFormat.CHANNEL_IN_MONO,AudioFormat.ENCODING_PCM_16BIT);
-
-	long starttime=System.currentTimeMillis();
-	Log.d("micro","time="+starttime);
-
+	// WRITE META FILE
 	Date thisMoment = new Date();
 	final String formatedDate = formatter_date.format(thisMoment);
-
-// WRITE META FILE
-	//  String metaID = getString(R.string.metaID);
-	String dataType = getString(R.string.dataType);
+	final String dataType = getString(R.string.dataType);
 	try {
 		metawriter.write("Software version: "+ versionDate +"\n");
 		metawriter.write("Device ID: "+ imei +"\n");
-                // remove this line in due course as it is now the Meta ID that is stored
-		metawriter.write("Contact ID: "+ metaID +"\n");
 		metawriter.write("Meta ID: "+ metaID +"\n");
 		metawriter.write("Data type: "+ dataType +"\n");
 		metawriter.write("Date: "+formatedDate+"\n");
@@ -323,88 +155,100 @@ private void main() {
 		metawriter.write("Scale factor: "+myDoubleFormat.format(scaleFactor)+"\n");
 		metawriter.write("X label: Time [hours]\n");
 		metawriter.write("Y label: " + dataType + " [Watt]\n");
-		metawriter.write("Title: " + myLocationText +"\n");
-	    } catch (IOException e) {
-	     // TODO Auto-generated catch block
-	     e.printStackTrace();
-	    }
-    //loop until stop button callback	 
-    while(running==1) { 
-	Log.d("micro","about to open recorder stream at time="+(System.currentTimeMillis()-starttime)+" ms");
-	try {
-		recorder = new AudioRecord(AudioSource.MIC,44100, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, 10*minbuffsize); // 14_07_26_ removed 10*minbuffsize
-	} catch (Throwable t) {
-        	Log.e("AudioRecord","Recording Failed");
-		recorder.stop();
-		recorder.release();
-		recorder = null;
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
 	}
-       if (recorder.getState() == AudioRecord.STATE_INITIALIZED) {
-	recorder.startRecording();
-	Log.d("micro","recorder stream opened at time="+(System.currentTimeMillis()-starttime)+" ms");
+}
 
+@Override
+public void onStart(){
+	super.onStart();  
+	if (running!=1) {	// 14_07_26_ got the impression new instances are created when waking up the phone	
+		running=1;
+		new Thread(new Runnable() { 
+			public void run(){	    
+				main();
+			}
+		}).start();
+	}
+}
 
-	for (int loop=0;loop<1000;loop++){ 
-	    if (running==1) { 
-		bufSumSqr = 0.0;	
-		bufAvg=0.0;
-    	//for (int z2=0;z2<5;z2++){
-		  //loop 441 times reading 100 from buffer each time - this loop takes 1 second	
-		  for (int z1=0;z1<441;z1++) { 
-			try {
-				Nread = recorder.read(buffer,0,buffer.length);
-			    } catch (NullPointerException e) {
-			       for (int i=0; i<100; i++) {
-				buffer[i]=-1;
-				}	
-			    }
+private void printToAndroid(final String str1){	
+	runOnUiThread(new Runnable() {
+		public void run() {
+			mylogtext=str1+"\n"+mylogtext; 
+			mylog.setText("Version: " + versionDate + ": \nID: " + metaID + ": \n"+mylogtext);
+			if (mylogtext.length() > 5000) {
+				mylogtext=""; 
+			}
+		}
+	});
+}
 
-			//bufsum is the total of 100 audio samples - ie 1/441 of a second
-			double bufsum=0.0;
-			for (int i=0; i<Nread; i++) {
-				bufsum += buffer[i];
-			}   
-			bufAvg	  = bufsum / Nread;
-			bufSumSqr += bufAvg*bufAvg;
-		  }	     
-	//}	
-		//this needs to be square rooted
-		final_sumrms=Math.sqrt(bufSumSqr/(441.0));//rms is the mean rms over 441 samples in a second * nseconds interval
-		final_sumrms=(final_sumrms+offset)*scaleFactor; // correction factor
-
-		Date date1 = new Date();  
-		final String formattedDateTime = formatter_datetime.format(date1);
-		final String formattedDateString_timestamp = formatter_timestamp.format(date1);
-
-		printToAndroid(formattedDateString_timestamp+": "+mydecimalformat.format(final_sumrms)+" W"); 
-		
+private void main() {
+	Date recordingDate = new Date();  
+	formattedDateString = formatter_date.format(recordingDate);	
+	minbuffsize = AudioRecord.getMinBufferSize(44100,AudioFormat.CHANNEL_IN_MONO,AudioFormat.ENCODING_PCM_16BIT);
+	//loop until stop button callback	 
+	while(running==1) { 
 		try {
-		     writer.write(formattedDateTime+","+mydecimalformat.format(final_sumrms)+"\n");
-		    } catch (IOException e) {
-		     // TODO Auto-generated catch block
-		     e.printStackTrace();
-		    }
-	    } //end of if running
-
-	    try {
-	        writer.flush();
-	        metawriter.flush();
-	    	} catch (IOException e) {
-	          // TODO Auto-generated catch block
-	    	  e.printStackTrace();
-	    }
-	}  // every 1000 seconds the recorder is reset via recorder.stop
-
-	
-	Log.d("micro","about to close recorder stream");
-	recorder.stop();
-	recorder.release();
-	recorder = null;
- 	} // if initialised
-
-      //end of while running
-      }
-
-      printToAndroid("D-Mon stopped.");
-}
-}
+			recorder = new AudioRecord(AudioSource.MIC,44100, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, 10*minbuffsize); // 14_07_26_ removed 10*minbuffsize
+		} catch (Throwable t) {
+			Log.e("AudioRecord","Recording Failed");
+			recorder.stop();
+			recorder.release();
+			recorder = null;
+		}
+		if (recorder.getState() == AudioRecord.STATE_INITIALIZED) {
+			recorder.startRecording();
+			for (int loop=0;loop<1000;loop++){ 
+				if (running==1) { 
+					bufSumSqr = 0.0;	
+					bufAvg=0.0;
+					//loop 441 times reading 100 from buffer each time - this loop takes 1 second	
+					for (int z1=0;z1<441;z1++) { 
+						try {
+							Nread = recorder.read(buffer,0,buffer.length);
+						} catch (NullPointerException e) {
+							for (int i=0; i<100; i++) {
+								buffer[i]=-1;
+							}	
+						}
+						double bufsum=0.0;							 //bufsum is the total of 100 audio samples - ie 1/441 of a second
+						for (int i=0; i<Nread; i++) {
+							bufsum += buffer[i];
+						}   
+						bufAvg	  = bufsum / Nread;
+						bufSumSqr += bufAvg*bufAvg;
+					}     
+					//this needs to be square rooted
+					final_sumrms=Math.sqrt(bufSumSqr/(441.0));		//rms is the mean rms over 441 samples in a second * nseconds interval
+					final_sumrms=(final_sumrms+offset)*scaleFactor; // correction factor
+					// record values
+					Date recordingTime = new Date();  
+					final String formattedDateTime = formatter_datetime.format(recordingTime);
+					printToAndroid(formattedDateTime+": "+mydecimalformat.format(final_sumrms)+" W"); 
+					try {
+						writer.write(formattedDateTime+","+mydecimalformat.format(final_sumrms)+"\n");
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				} //end of if running
+				try {
+					writer.flush();
+					metawriter.flush();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}  // every 1000 seconds the recorder is reset via recorder.stop
+			recorder.stop();
+			recorder.release();
+			recorder = null;
+		} // if initialised
+	}	//end of while running
+	printToAndroid("D-Mon stopped.");
+	} // main()
+} // class Main Activity
