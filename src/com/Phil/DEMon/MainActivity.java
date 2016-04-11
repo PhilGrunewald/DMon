@@ -103,15 +103,15 @@ public void onCreate(Bundle savedInstanceState) {
 	}
 // create .csv and .meta files
 	int FileIndex=1;
-	filename=formattedDateString+"_"+imei+"_"+FileIndex+".csv";
+	filename=formattedDateString+"_"+metaID+"_"+FileIndex+".csv";
 	file = new File(folder, filename);
 	metafile = new File(folder, filename);
 	while (file.exists()) {
 		FileIndex++;
-		filename=formattedDateString+"_"+imei+"_"+FileIndex+".csv";
+		filename=formattedDateString+"_"+metaID+"_"+FileIndex+".csv";
 		file = new File(folder, filename);
 	} 
-	filename=formattedDateString+"_"+imei+"_"+FileIndex+".meta";
+	filename=formattedDateString+"_"+metaID+"_"+FileIndex+".meta";
 	metafile = new File(folder, filename);
 	try{  
 		try{
