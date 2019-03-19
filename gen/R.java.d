@@ -1,4 +1,4 @@
-/Users/phil/Documents/Oxford/Meter/Software/eMeter/gen/com/Phil/DEMon/R.java \
+/Users/phil/Documents/Oxford/Meter/Software/eMeter/gen/uk/joymeter/eMeter/R.java \
  : /Users/phil/Documents/Oxford/Meter/Software/eMeter/res/values-sw720dp-land/dimens.xml \
 /Users/phil/Documents/Oxford/Meter/Software/eMeter/res/layout/activity_main.xml \
 /Users/phil/Documents/Oxford/Meter/Software/eMeter/res/values-sw600dp/dimens.xml \

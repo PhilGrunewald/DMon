@@ -1,6 +1,6 @@
 # view AndroidManifest.xml #generated:16
--keep class com.Phil.DEMon.AlarmReceiver { <init>(...); }
+-keep class uk.joymeter.eMeter.AlarmReceiver { <init>(...); }
 
 # view AndroidManifest.xml #generated:18
--keep class com.Phil.DEMon.MainActivity { <init>(...); }
+-keep class uk.joymeter.eMeter.eMeter { <init>(...); }
 

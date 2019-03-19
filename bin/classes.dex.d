@@ -1,4 +1,18 @@
 /Users/phil/Documents/Oxford/Meter/Software/eMeter/bin/classes.dex : \
+/Users/phil/Documents/Oxford/Meter/Software/eMeter/bin/classes/uk/joymeter/eMeter/R.class \
+/Users/phil/Documents/Oxford/Meter/Software/eMeter/bin/classes/uk/joymeter/eMeter/eMeter$2.class \
+/Users/phil/Documents/Oxford/Meter/Software/eMeter/bin/classes/uk/joymeter/eMeter/R$xml.class \
+/Users/phil/Documents/Oxford/Meter/Software/eMeter/bin/classes/uk/joymeter/eMeter/R$menu.class \
+/Users/phil/Documents/Oxford/Meter/Software/eMeter/bin/classes/uk/joymeter/eMeter/R$id.class \
+/Users/phil/Documents/Oxford/Meter/Software/eMeter/bin/classes/uk/joymeter/eMeter/eMeter.class \
+/Users/phil/Documents/Oxford/Meter/Software/eMeter/bin/classes/uk/joymeter/eMeter/eMeter$1.class \
+/Users/phil/Documents/Oxford/Meter/Software/eMeter/bin/classes/uk/joymeter/eMeter/BuildConfig.class \
+/Users/phil/Documents/Oxford/Meter/Software/eMeter/bin/classes/uk/joymeter/eMeter/R$style.class \
+/Users/phil/Documents/Oxford/Meter/Software/eMeter/bin/classes/uk/joymeter/eMeter/R$string.class \
+/Users/phil/Documents/Oxford/Meter/Software/eMeter/bin/classes/uk/joymeter/eMeter/R$dimen.class \
+/Users/phil/Documents/Oxford/Meter/Software/eMeter/bin/classes/uk/joymeter/eMeter/R$layout.class \
+/Users/phil/Documents/Oxford/Meter/Software/eMeter/bin/classes/uk/joymeter/eMeter/R$attr.class \
+/Users/phil/Documents/Oxford/Meter/Software/eMeter/bin/classes/uk/joymeter/eMeter/R$drawable.class \
 /Users/phil/Documents/Oxford/Meter/Software/eMeter/bin/classes/com/Phil/DEMon/R.class \
 /Users/phil/Documents/Oxford/Meter/Software/eMeter/bin/classes/com/Phil/DEMon/R$xml.class \
 /Users/phil/Documents/Oxford/Meter/Software/eMeter/bin/classes/com/Phil/DEMon/MainActivity.class \
