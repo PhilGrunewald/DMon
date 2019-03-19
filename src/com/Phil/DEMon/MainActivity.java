@@ -23,7 +23,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.EditText;
-import android.widget.ImageView;
+// import android.widget.ImageView;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -49,7 +49,7 @@ import android.support.v4.content.FileProvider;
 
 //Main Class
 public class MainActivity extends Activity{
-	private String versionDate="16_04_26";
+	private String versionDate="19_03_18";
 	private FileWriter writer;
 	private FileWriter metawriter;
 	private File root;
@@ -195,69 +195,6 @@ private void printToAndroid(final String str1){
 	});
 }
 
-//-------------------- 
-// start
-// vis insertion 23 Aug 2017
-//-------------------- 
-
-private void dispatchTakePictureIntent() {
-    // Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-	File imgFile = new File(root,"/METER/x.jpg"); // reinstated 3 Nov 14
-
-// File tempFile = File.createTempFile("my_app", ".jpg");
-// fileName = imgFile.getAbsolutePath();
-    Uri uri = Uri.fromFile(imgFile);
-    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-    intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-    startActivityForResult(intent, PICTURE_REQUEST_CODE);
-
-
-
-//     // Ensure that there's a camera activity to handle the intent
-//     if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-//         // Create the File where the photo should go
-//         File photoFile = null;
-//         try {
-//             photoFile = createImageFile();
-//         } catch (IOException ex) {
-//             // Error occurred while creating the File
-//         }
-//         // Continue only if the File was successfully created
-//         if (photoFile != null) {
-//             Uri photoURI = FileProvider.getUriForFile(this,
-//                                                   "com.example.android.fileprovider",
-//                                                   photoFile);
-//             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-//             startActivityForResult(takePictureIntent, 1);
-//         }
-//     }
-}
-
-
-
-private File createImageFile() throws IOException {
-	folder = new File(root,"/METER"); // reinstated 3 Nov 14
-    // Create an image file name
-    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-    // String imageFileName = "JPEG_" + timeStamp + "_";
-    //File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-    File image = File.createTempFile(
-        timeStamp,  /* prefix */
-        ".jpg",         /* suffix */
-        folder      /* directory */
-    );
-
-    // Save a file: path for use with ACTION_VIEW intents
-    mCurrentPhotoPath = image.getAbsolutePath();
-    return image;
-}
-
-
-
-//-------------------- 
-// end
-// vis insertion 23 Aug 2017
-//-------------------- 
 private void main() {
 	Date recordingDate = new Date();  
 	formattedDateString = formatter_date.format(recordingDate);	
@@ -275,7 +212,7 @@ private void main() {
 		if (recorder.getState() == AudioRecord.STATE_INITIALIZED) {
 			recorder.startRecording();
 
-            dispatchTakePictureIntent();
+            // dispatchTakePictureIntent();
 
 			for (int loop=0;loop<1000;loop++){ 
 				if (running==1) { 
