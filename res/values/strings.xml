@@ -1,10 +1,10 @@
 <resources>
 
-    <string name="app_name">Energy Monitor</string>
+    <string name="app_name">eMeter</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="location_hint">enter location</string>
-    <string name="contactID">301</string>
+    <string name="contactID">505</string>
     <string name="dataType">E</string>
 
 </resources>

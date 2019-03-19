@@ -39,9 +39,17 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import android.content.Intent;
+import android.provider.MediaStore;
+import android.net.Uri;
+// import android.content.ContentProvider;
+import android.support.v4.content.FileProvider;
+// import android.hardware.camera;
+
+
 //Main Class
 public class MainActivity extends Activity{
-	private String versionDate="16_03_08";
+	private String versionDate="16_04_26";
 	private FileWriter writer;
 	private FileWriter metawriter;
 	private File root;
@@ -71,6 +79,7 @@ public class MainActivity extends Activity{
 	private TextView mylog;
 	private String metaID;			// read from txt file
 
+    private String mCurrentPhotoPath;
 
 @Override
 public void onCreate(Bundle savedInstanceState) {
@@ -103,15 +112,15 @@ public void onCreate(Bundle savedInstanceState) {
 	}
 // create .csv and .meta files
 	int FileIndex=1;
-	filename=formattedDateString+"_"+metaID+"_"+FileIndex+".csv";
+	filename=metaID+"_"+FileIndex+".csv";
 	file = new File(folder, filename);
 	metafile = new File(folder, filename);
 	while (file.exists()) {
 		FileIndex++;
-		filename=formattedDateString+"_"+metaID+"_"+FileIndex+".csv";
+		filename= metaID+"_"+FileIndex+".csv";
 		file = new File(folder, filename);
 	} 
-	filename=formattedDateString+"_"+metaID+"_"+FileIndex+".meta";
+	filename=metaID+"_"+FileIndex+".meta";
 	metafile = new File(folder, filename);
 	try{  
 		try{
@@ -186,6 +195,69 @@ private void printToAndroid(final String str1){
 	});
 }
 
+//-------------------- 
+// start
+// vis insertion 23 Aug 2017
+//-------------------- 
+
+private void dispatchTakePictureIntent() {
+    // Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+	File imgFile = new File(root,"/METER/x.jpg"); // reinstated 3 Nov 14
+
+// File tempFile = File.createTempFile("my_app", ".jpg");
+// fileName = imgFile.getAbsolutePath();
+    Uri uri = Uri.fromFile(imgFile);
+    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+    intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+    startActivityForResult(intent, PICTURE_REQUEST_CODE);
+
+
+
+//     // Ensure that there's a camera activity to handle the intent
+//     if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+//         // Create the File where the photo should go
+//         File photoFile = null;
+//         try {
+//             photoFile = createImageFile();
+//         } catch (IOException ex) {
+//             // Error occurred while creating the File
+//         }
+//         // Continue only if the File was successfully created
+//         if (photoFile != null) {
+//             Uri photoURI = FileProvider.getUriForFile(this,
+//                                                   "com.example.android.fileprovider",
+//                                                   photoFile);
+//             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+//             startActivityForResult(takePictureIntent, 1);
+//         }
+//     }
+}
+
+
+
+private File createImageFile() throws IOException {
+	folder = new File(root,"/METER"); // reinstated 3 Nov 14
+    // Create an image file name
+    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+    // String imageFileName = "JPEG_" + timeStamp + "_";
+    //File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+    File image = File.createTempFile(
+        timeStamp,  /* prefix */
+        ".jpg",         /* suffix */
+        folder      /* directory */
+    );
+
+    // Save a file: path for use with ACTION_VIEW intents
+    mCurrentPhotoPath = image.getAbsolutePath();
+    return image;
+}
+
+
+
+//-------------------- 
+// end
+// vis insertion 23 Aug 2017
+//-------------------- 
 private void main() {
 	Date recordingDate = new Date();  
 	formattedDateString = formatter_date.format(recordingDate);	
@@ -202,6 +274,9 @@ private void main() {
 		}
 		if (recorder.getState() == AudioRecord.STATE_INITIALIZED) {
 			recorder.startRecording();
+
+            dispatchTakePictureIntent();
+
 			for (int loop=0;loop<1000;loop++){ 
 				if (running==1) { 
 					bufSumSqr = 0.0;	
